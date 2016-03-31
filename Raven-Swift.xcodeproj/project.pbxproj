@@ -21,6 +21,7 @@
 		030E0EA71A89D7D600E5E6BE /* Raven-OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 030E0EA11A89D4EA00E5E6BE /* Raven-OSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		03DE86181A89D9060056F441 /* Raven.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 030E0E751A89D34D00E5E6BE /* Raven.framework */; };
 		03DE86191A89D9060056F441 /* Raven.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 030E0E751A89D34D00E5E6BE /* Raven.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		03F62EFB1CADAB1D00ED896D /* UrlRequestBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F62EFA1CADAB1D00ED896D /* UrlRequestBuffer.swift */; };
 		63A8B07F1C335347003A99FF /* RavenConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650712C719BB1E7B00786DC4 /* RavenConfig.swift */; };
 		63A8B0801C335347003A99FF /* UncaughtExceptionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 650712C419BB16A500786DC4 /* UncaughtExceptionHandler.m */; };
 		63A8B0811C335347003A99FF /* RavenClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 650712C619BB1E7B00786DC4 /* RavenClient.swift */; };
@@ -75,6 +76,7 @@
 		030E0EA01A89D4EA00E5E6BE /* Raven-iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Raven-iOS.h"; sourceTree = "<group>"; };
 		030E0EA11A89D4EA00E5E6BE /* Raven-OSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Raven-OSX.h"; sourceTree = "<group>"; };
 		030E0EA21A89D59C00E5E6BE /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		03F62EFA1CADAB1D00ED896D /* UrlRequestBuffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UrlRequestBuffer.swift; sourceTree = "<group>"; };
 		63A8B08B1C335347003A99FF /* Raven.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Raven.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		63A8B08C1C335347003A99FF /* Info-tvOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-tvOS.plist"; path = "/Users/david/Code/raven-swift/Info-tvOS.plist"; sourceTree = "<absolute>"; };
 		650712C319BB16A500786DC4 /* UncaughtExceptionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UncaughtExceptionHandler.h; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 			children = (
 				650712CA19BB1E8700786DC4 /* AppDelegate.swift */,
 				650712CB19BB1E8700786DC4 /* ViewController.swift */,
+				03F62EFA1CADAB1D00ED896D /* UrlRequestBuffer.swift */,
 				652C5DEB19B7AA2D002CD4A9 /* Main.storyboard */,
 				652C5DEE19B7AA2D002CD4A9 /* Images.xcassets */,
 				652C5DE519B7AA2C002CD4A9 /* Supporting Files */,
@@ -471,6 +474,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				650712CD19BB1E8700786DC4 /* ViewController.swift in Sources */,
+				03F62EFB1CADAB1D00ED896D /* UrlRequestBuffer.swift in Sources */,
 				650712CC19BB1E8700786DC4 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

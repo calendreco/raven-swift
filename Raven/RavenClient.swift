@@ -25,6 +25,10 @@ public enum RavenLogLevel: String {
 
 private var _RavenClientSharedInstance : RavenClient?
 
+public protocol RavenClientTransportDelegate: class {
+    func ravenClient(client: RavenClient, producedRequest: NSURLRequest)
+}
+
 public class RavenClient : NSObject {
     //MARK: - Properties
     public var extra: [String: AnyObject]
@@ -33,6 +37,8 @@ public class RavenClient : NSObject {
     public let logger: String?
 
     internal let config: RavenConfig?
+    
+    public weak var transportDelegate: RavenClientTransportDelegate?
 
     private var dateFormatter : NSDateFormatter {
         let dateFormatter = NSDateFormatter()
@@ -181,7 +187,7 @@ public class RavenClient : NSObject {
 
     :param: message  The message to be logged
     */
-    public func captureMessage(message : String, method: String? = __FUNCTION__ , file: String? = __FILE__, line: Int = __LINE__) {
+    public func captureMessage(message : String, method: String? = #function , file: String? = #file, line: Int = #line) {
         self.captureMessage(message, level: .Info, additionalExtra:[:], additionalTags:[:], method:method, file:file, line:line)
     }
 
@@ -192,7 +198,7 @@ public class RavenClient : NSObject {
     :param: message  The message to be logged
     :param: level  log level
     */
-    public func captureMessage(message: String, level: RavenLogLevel, method: String? = __FUNCTION__ , file: String? = __FILE__, line: Int = __LINE__){
+    public func captureMessage(message: String, level: RavenLogLevel, method: String? = #function , file: String? = #file, line: Int = #line){
         self.captureMessage(message, level: level, additionalExtra:[:], additionalTags:[:], method:method, file:file, line:line)
     }
 
@@ -205,7 +211,7 @@ public class RavenClient : NSObject {
     :param: additionalExtra  Additional data that will be sent with the log
     :param: additionalTags  Additional tags that will be sent with the log
     */
-    public func captureMessage(message: String, level: RavenLogLevel, additionalExtra:[String: AnyObject], additionalTags: [String: AnyObject], method:String? = __FUNCTION__, file:String? = __FILE__, line:Int = __LINE__) {
+    public func captureMessage(message: String, level: RavenLogLevel, additionalExtra:[String: AnyObject], additionalTags: [String: AnyObject], method:String? = #function, file:String? = #file, line:Int = #line) {
         var stacktrace : [AnyObject] = []
         var culprit : String = ""
 
@@ -229,7 +235,7 @@ public class RavenClient : NSObject {
 
     :param: error  The error to capture
     */
-    public func captureError(error : NSError, method: String? = __FUNCTION__, file: String? = __FILE__, line: Int = __LINE__) {
+    public func captureError(error : NSError, method: String? = #function, file: String? = #file, line: Int = #line) {
         self.captureMessage("\(error)", level: .Error, method: method, file: file, line: line )
     }
 
@@ -241,7 +247,7 @@ public class RavenClient : NSObject {
 
     :param: error  The error to capture
     */
-    public func captureError<E where E:ErrorType, E:StringLiteralConvertible>(error: E, method: String? = __FUNCTION__, file: String? = __FILE__, line: Int = __LINE__) {
+    public func captureError<E where E:ErrorType, E:StringLiteralConvertible>(error: E, method: String? = #function, file: String? = #file, line: Int = #line) {
         self.captureMessage("\(error)", level: .Error, method: method, file: file, line: line )
     }
 
@@ -320,7 +326,7 @@ public class RavenClient : NSObject {
     :param: exception  The exception to be captured.
     :param: sendNow  Control whether the exception is sent to the server now, or when the app is next opened
     */
-    public func captureException(exception: NSException, method:String? = __FUNCTION__, file:String? = __FILE__, line:Int = __LINE__, sendNow:Bool = false) {
+    public func captureException(exception: NSException, method:String? = #function, file:String? = #file, line:Int = #line, sendNow:Bool = false) {
         let message = "\(exception.name): \(exception.reason!)"
         let exceptionDict = ["type": exception.name, "value": exception.reason ?? ""]
 
@@ -484,21 +490,25 @@ public class RavenClient : NSObject {
         request.HTTPBody = JSON
         request.setValue("\(header)", forHTTPHeaderField:"X-Sentry-Auth")
         
-        let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
-        let task = session.dataTaskWithRequest(request, completionHandler: {
-            (_, response, error) in
-            if let error = error {
-                let userInfo = error.userInfo as! [String: AnyObject]
-                let errorKey: AnyObject? = userInfo[NSURLErrorFailingURLStringErrorKey]
-                print("Connection failed! Error - \(error.localizedDescription) \(errorKey!)")
-
-            } else if let response = response {
-                #if DEBUG
-                    println("Response from Sentry: \(response)")
-                #endif
-            }
-            print("JSON sent to Sentry")
-        })
-        task.resume()
+        if let transportDelegate = transportDelegate {
+            transportDelegate.ravenClient(self, producedRequest: request)
+        } else {
+            let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+            let task = session.dataTaskWithRequest(request, completionHandler: {
+                (_, response, error) in
+                if let error = error {
+                    let userInfo = error.userInfo as! [String: AnyObject]
+                    let errorKey: AnyObject? = userInfo[NSURLErrorFailingURLStringErrorKey]
+                    print("Connection failed! Error - \(error.localizedDescription) \(errorKey!)")
+                    
+                } else if let response = response {
+                    #if DEBUG
+                        println("Response from Sentry: \(response)")
+                    #endif
+                }
+                print("JSON sent to Sentry")
+            })
+            task.resume()
+        }
     }
 }
